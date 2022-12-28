@@ -15,35 +15,8 @@
 #include"model.h"
 
 
-const unsigned int width = 800;
-const unsigned int height = 800;
-GLfloat lightVertices[] =
-{ //     COORDINATES     //
-	-0.1f, -0.1f,  0.1f,
-	-0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f, -0.1f,
-	 0.1f, -0.1f,  0.1f,
-	-0.1f,  0.1f,  0.1f,
-	-0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f, -0.1f,
-	 0.1f,  0.1f,  0.1f
-};
-
-GLuint lightIndices[] =
-{
-	0, 1, 2,
-	0, 2, 3,
-	0, 4, 7,
-	0, 7, 3,
-	3, 7, 6,
-	3, 6, 2,
-	2, 6, 5,
-	2, 5, 1,
-	1, 5, 4,
-	1, 4, 0,
-	4, 5, 6,
-	4, 6, 7
-};
+const unsigned int width = 2880;
+const unsigned int height = 1800;
 
 
 
@@ -85,22 +58,12 @@ int main()
 	Shader shaderProgram("default.vert", "default.frag");
 
 
-	Model ourModel("snowman.obj");
+	Model ourModel("base.obj");
+	Model moon("moon.dae");
+	Model snowman("hut.obj");
 	// Shader for light cube
 	Shader lightShader("light.vert", "light.frag");
-	// Generates Vertex Array Object and binds it
-	VAO lightVAO;
-	lightVAO.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
-	VBO lightVBO(lightVertices, sizeof(lightVertices));
-	// Generates Element Buffer Object and links it to indices
-	EBO lightEBO(lightIndices, sizeof(lightIndices));
-	// Links VBO attributes such as coordinates and colors to VAO
-	lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-	// Unbind all to prevent accidentally modifying them
-	lightVAO.Unbind();
-	lightVBO.Unbind();
-	lightEBO.Unbind();
+	Shader snowmanS("default.vert", "default.frag");
 
 
 
@@ -109,12 +72,26 @@ int main()
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
 
+	glm::mat4 base = glm::mat4(1.0f);
 	// Variables that help the rotation of the pyramid
 	float rotation = 0.0f;
 	double prevTime = glfwGetTime();
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
 	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+
+
+	shaderProgram.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(base));
+	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	glm::mat4 snownamM = glm::mat4(1.0f);
+	snownamM = glm::translate(snownamM, glm::vec3(-10.0f, -10.0f, -10.0f));
+	snownamM = base*snownamM ;
+	snowmanS.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(snowmanS.ID, "model"), 1, GL_FALSE, glm::value_ptr(snownamM));
+	glUniform4f(glGetUniformLocation(snowmanS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(snowmanS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 	// Creates camera object
@@ -123,7 +100,7 @@ int main()
 	while (!glfwWindowShouldClose(window))
 	{
 		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		glClearColor(0.04f, 0.01f, 0.09f, 1.0f);
 		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
@@ -141,15 +118,28 @@ int main()
 		// Handles camera inputs
 		camera.Inputs(window);
 		// Updates and exports the camera matrix to the Vertex Shader
-		camera.Matrix(45.0f, 0.1f, 100.0f, shaderProgram, "cameraM");
+		camera.Matrix(45.0f, 0.1f, 100.0);
+
 		
-		glUniform1f(glGetUniformLocation(shaderProgram.ID, "scale"), 0.3f);
-		
+		camera.ApplyCamera(shaderProgram, "cameraM");
+		glUniform1f(glGetUniformLocation(shaderProgram.ID, "scale"), 2.0f);
+		glUniform3f(glGetUniformLocation(shaderProgram.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 		
 		ourModel.Draw(shaderProgram);
-		lightVAO.Bind();
+		
 		lightShader.Activate();
-		glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		moon.Draw(lightShader);
+		glUniform1f(glGetUniformLocation(lightShader.ID, "scale"), 0.05f);
+		snowmanS.Activate();
+		glm::mat4 snownamM = glm::mat4(1.0f);
+		snownamM = glm::translate(snownamM, glm::vec3(-1.0f, -0.5f, 1.0f));
+		snownamM = base * snownamM;
+		camera.ApplyCamera(snowmanS, "cameraM");
+		glUniform1f(glGetUniformLocation(snowmanS.ID, "scale"),1.0f);
+		glUniform3f(glGetUniformLocation(snowmanS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+		glUniformMatrix4fv(glGetUniformLocation(snowmanS.ID, "model"), 1, GL_FALSE, glm::value_ptr(snownamM));
+		snowman.Draw(snowmanS);
+		
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events

@@ -1,0 +1,116 @@
+# Blender 3.3.1 MTL File: 'base.blend'
+# www.blender.org
+
+newmtl Material.005
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.006
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.007
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.008
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.009
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.010
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Material.011
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd woodfence_low_woodfence_BaseColor.png
+map_Ns woodfence_low_woodfence_Roughness.png
+map_refl woodfence_low_woodfence_Metallic.png
+map_Bump woodfence_low_woodfence_normal_openGL.png
+
+newmtl Snow.003
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.904000 0.904000 0.904000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl Snow.005
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.904000 0.904000 0.904000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl snow_1_1
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd snow_1_1.png
