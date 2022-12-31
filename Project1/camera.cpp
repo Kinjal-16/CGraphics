@@ -33,27 +33,27 @@ void Camera::Inputs(GLFWwindow* window)
 	// Handles key inputs
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		Position += (speed * Orientation)/50.0f;
+		Position += (speed * Orientation)/10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		Position += (speed * -glm::normalize(glm::cross(Orientation, Up))) / 50.0f;
+		Position += (speed * -glm::normalize(glm::cross(Orientation, Up))) / 10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		Position += (speed * -Orientation)/50.0f;
+		Position += (speed * -Orientation)/10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		Position += (speed * glm::normalize(glm::cross(Orientation, Up))) / 50.0f;
+		Position += (speed * glm::normalize(glm::cross(Orientation, Up))) / 10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
 	{
-		Position += (speed * Up) / 50.0f;
+		Position += (speed * Up) / 10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
 	{
-		Position += (speed * -Up) / 50.0f;
+		Position += (speed * -Up) / 10.0f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{

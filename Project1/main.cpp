@@ -18,8 +18,120 @@
 const unsigned int width = 2880;
 const unsigned int height = 1800;
 
+glm::vec3 translate[6], rotation[6];
+int animate(int i,int flag)
+{
+	
+	if (i == 0)
+	{
+		if (translate[i].y < 30 && rotation[i].y<90)
+		{
+			translate[i].y = translate[i].y + 0.1;
+
+		}
+	
+		if (translate[i].y >=30 && rotation[i].y<=90)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+			
+		}
+		
+		if (translate[i].y >= 30 && rotation[i].y > 90 && translate[i].x < 35)
+		{
+			translate[i].x = translate[i].x + 0.1;
+
+		}
+		
+		
+		if (translate[i].y >= 30 && rotation[i].y > 90 && translate[i].x >=35 && rotation[i].y <= 180)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+			
+		}
+		
+		if (translate[i].x >= 35 && rotation[i].y > 180 && translate[i].y >= 0)
+		{
+			translate[i].y = translate[i].y - 0.1;
+
+		}
+		
+		if (translate[i].x >= 35 && rotation[i].y > 180 && translate[i].y < 0 && rotation[i].y <= 270)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+			
+		}
+		
+		if (rotation[i].y > 270 && translate[i].y < 0 &&  translate[i].x >=15)
+		{
+			translate[i].x = translate[i].x - 0.1;
+
+		}
+		
+		if (rotation[i].y > 270 && translate[i].y < 0 && translate[i].x < 15 && rotation[i].y <= 360)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+			
+		}
+		if (rotation[i].y >= 360)
+			rotation[i].y = 0.0f;
+		
+	}
+	if (i == 1)
+	{
+		if (translate[i].y < 26 && rotation[i].y < 90)
+		{
+			translate[i].y = translate[i].y + 0.1;
+
+		}
+
+		if (translate[i].y >= 26 && rotation[i].y <= 90)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+
+		}
+
+		if (translate[i].y >= 26 && rotation[i].y > 90 && translate[i].x < 40)
+		{
+			translate[i].x = translate[i].x + 0.1;
+
+		}
 
 
+		if (translate[i].y >= 26 && rotation[i].y > 90 && translate[i].x >= 40 && rotation[i].y <= 180)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+
+		}
+
+		if (translate[i].x >= 40 && rotation[i].y > 180 && translate[i].y >= 5)
+		{
+			translate[i].y = translate[i].y - 0.1;
+
+		}
+
+		if (translate[i].x >= 40 && rotation[i].y > 180 && translate[i].y < 5 && rotation[i].y <= 270)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+
+		}
+
+		if (rotation[i].y > 270 && translate[i].y < 5 && translate[i].x >=10)
+		{
+			translate[i].x = translate[i].x - 0.1;
+
+		}
+
+		if (rotation[i].y > 270 && translate[i].y < 5 && translate[i].x < 10 && rotation[i].y <= 360)
+		{
+			rotation[i].y = rotation[i].y + 0.1;
+
+		}
+		if (rotation[i].y >= 360)
+			rotation[i].y = 0.0f;
+
+	}
+	return flag;
+}
 
 int main()
 {
@@ -35,7 +147,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a GLFWwindow object of 800 by 800 pixels, naming it "YoutubeOpenGL"
-	GLFWwindow* window = glfwCreateWindow(width, height, "YoutubeOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Winter Wonderland", NULL, NULL);
 	// Error check if the window fails to create
 	if (window == NULL)
 	{
@@ -54,49 +166,45 @@ int main()
 
 
 
-	// Generates Shader object using shaders default.vert and default.frag
-	Shader shaderProgram("default.vert", "default.frag");
 
+	
 
-	Model ourModel("base.obj");
+	Model base("base.obj");
 	Model moon("moon.dae");
-	Model snowman("hut.obj");
-	// Shader for light cube
+	Model hut("hut.obj");
+	
+	Model snowMan[] = { Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae") };
+	// Shader for the base
+	Shader baseShader("default.vert", "default.frag");
+	// Shader for moon
 	Shader lightShader("light.vert", "light.frag");
-	Shader snowmanS("default.vert", "default.frag");
+	// Shader for hut
+	Shader hutS("default.vert", "default.frag");
+	// Shader for the first snowman
+	
+	Shader snowManShader[] = { Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag") };
 
 
 
-	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
-	glm::mat4 lightModel = glm::mat4(1.0f);
-	lightModel = glm::translate(lightModel, lightPos);
 
-	glm::mat4 base = glm::mat4(1.0f);
+
+	glm::mat4 baseModel = glm::mat4(1.0f);
 	// Variables that help the rotation of the pyramid
-	float rotation = 0.0f;
+	//float rotation = 0.0f;
 	double prevTime = glfwGetTime();
-	lightShader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
-	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-
-
-	shaderProgram.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(base));
-	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-	glm::mat4 snownamM = glm::mat4(1.0f);
-	snownamM = glm::translate(snownamM, glm::vec3(-10.0f, -10.0f, -10.0f));
-	snownamM = base*snownamM ;
-	snowmanS.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(snowmanS.ID, "model"), 1, GL_FALSE, glm::value_ptr(snownamM));
-	glUniform4f(glGetUniformLocation(snowmanS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-	glUniform3f(glGetUniformLocation(snowmanS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+	
+	
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 	// Creates camera object
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera camera(width, height, glm::vec3(5.0f, 5.0f, 2.0f));
+
 	// Main while loop
+	
+	
+	translate[0].x = 15.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
+	translate[1].x = 20.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
+	int flag = 0;
 	while (!glfwWindowShouldClose(window))
 	{
 		// Specify the color of the background
@@ -104,42 +212,94 @@ int main()
 		// Clean the back buffer and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Tell OpenGL which Shader Program we want to use
-		shaderProgram.Activate();
-
-		// Simple timer
-		double crntTime = glfwGetTime();
-		if (crntTime - prevTime >= 1 / 60)
-		{
-			rotation += 0.01f;
-			prevTime = crntTime;
-		}
-
-
-		// Handles camera inputs
+			// Handles camera inputs
 		camera.Inputs(window);
 		// Updates and exports the camera matrix to the Vertex Shader
-		camera.Matrix(45.0f, 0.1f, 100.0);
-
-		
-		camera.ApplyCamera(shaderProgram, "cameraM");
-		glUniform1f(glGetUniformLocation(shaderProgram.ID, "scale"), 2.0f);
-		glUniform3f(glGetUniformLocation(shaderProgram.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-		
-		ourModel.Draw(shaderProgram);
+		camera.Matrix(45.0f, 0.1f, 200.0);
 		
 		lightShader.Activate();
-		moon.Draw(lightShader);
-		glUniform1f(glGetUniformLocation(lightShader.ID, "scale"), 0.05f);
-		snowmanS.Activate();
-		glm::mat4 snownamM = glm::mat4(1.0f);
-		snownamM = glm::translate(snownamM, glm::vec3(-1.0f, -0.5f, 1.0f));
-		snownamM = base * snownamM;
-		camera.ApplyCamera(snowmanS, "cameraM");
-		glUniform1f(glGetUniformLocation(snowmanS.ID, "scale"),1.0f);
-		glUniform3f(glGetUniformLocation(snowmanS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-		glUniformMatrix4fv(glGetUniformLocation(snowmanS.ID, "model"), 1, GL_FALSE, glm::value_ptr(snownamM));
-		snowman.Draw(snowmanS);
 		
+		glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec3 lightPos = glm::vec3(-100.0f, 100.0f, -50.0f);
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::translate(lightModel, lightPos);
+		glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+		glUniform1f(glGetUniformLocation(lightShader.ID, "scale"), 3.0f);
+		camera.ApplyCamera(lightShader, "cameraM");
+		moon.Draw(lightShader);
+
+		
+
+
+	
+	
+		baseShader.Activate();
+		glUniformMatrix4fv(glGetUniformLocation(baseShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(baseModel));
+		glUniform4f(glGetUniformLocation(baseShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniform3f(glGetUniformLocation(baseShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		camera.ApplyCamera(baseShader, "cameraM");
+		glUniform1f(glGetUniformLocation(baseShader.ID, "scale"), 2.0f);
+		glUniform3f(glGetUniformLocation(baseShader.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+
+		base.Draw(baseShader);
+
+		hutS.Activate();
+		glm::mat4 hutM = glm::mat4(1.0f);
+
+		hutM = glm::translate(hutM, glm::vec3(-1.0f, -0.5f, 1.0f));
+		hutM = baseModel * hutM;
+		camera.ApplyCamera(hutS, "cameraM");
+		glUniformMatrix4fv(glGetUniformLocation(hutS.ID, "model"), 1, GL_FALSE, glm::value_ptr(hutM));
+		glUniform4f(glGetUniformLocation(hutS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniform3f(glGetUniformLocation(hutS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform1f(glGetUniformLocation(hutS.ID, "scale"),1.5f);
+		glUniform3f(glGetUniformLocation(hutS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+		
+		hut.Draw(hutS);
+		glm::mat4 snowMan1M = glm::mat4(1.0f);
+		
+		
+		for (int i = 0; i < 3; i++)
+		{
+			if (i <=1)
+			{
+				snowManShader[i].Activate();
+				glm::mat4 snowMan1M = glm::mat4(1.0f);
+				flag=animate(i,flag);
+				snowMan1M = glm::translate(snowMan1M, glm::vec3(translate[i].x, translate[i].z, translate[i].y));
+				snowMan1M = glm::rotate(snowMan1M, glm::radians(rotation[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
+				snowMan1M = baseModel * snowMan1M;
+				camera.ApplyCamera(snowManShader[i], "cameraM");
+				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowMan1M));
+				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+				snowMan[i].Draw(snowManShader[i]);
+				//y1 = y1 + 4.0;
+			}
+			else
+				break;
+		}
+		//y1 = y1 - 12;
+		//y1 = 0.0f;
+		//for (int i = 3; i < 6; i++)
+		//{
+		//	y1 = y1 - 4.0;
+		//	snowManShader[i].Activate();
+		//	glm::mat4 snowMan1M = glm::mat4(1.0f);
+		//	snowMan1M = glm::translate(snowMan1M, glm::vec3(x1, z1, y1));
+		//	snowMan1M = baseModel * snowMan1M;
+		//	camera.ApplyCamera(snowManShader[i], "cameraM");
+		//	glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowMan1M));
+		//	glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		//	glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		//	glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
+		//	glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+		//	snowMan[i].Draw(snowManShader[i]);
+		//	
+		//}
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 		// Take care of all GLFW events
@@ -149,8 +309,9 @@ int main()
 
 
 	
-	shaderProgram.Delete();
-
+	baseShader.Delete();
+	lightShader.Delete();
+	hutS.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program
