@@ -19,7 +19,7 @@ const unsigned int width = 2880;
 const unsigned int height = 1800;
 
 glm::vec3 translate[6], rotation[6];
-bool collision[6] = {false};
+bool collision[6] = { false };
 bool wallCollide[6] = { false };
 float collisionRotaion[] = { 120.0f,120.0f,120.0f,120.0f,120.0f,120.0f };
 float collisiontranslation[] = { 5.0f,5.0f,5.0f,5.0f,5.0f,5.0f };
@@ -57,10 +57,10 @@ void collisionDetectionSnowman(int k)
 		float x = translate[i].x - translate[k].x;
 		float y = translate[i].y - translate[k].y;
 		float z = translate[i].z - translate[k].z;
-		float dist=glm::sqrt(glm::pow(x,2)+ glm::pow(y, 2)+ glm::pow(z, 2));
+		float dist = glm::sqrt(glm::pow(x, 2) + glm::pow(y, 2) + glm::pow(z, 2));
 		if (dist <= 5)
 		{
-			
+
 			collision[i] = true;
 			collisionResolutionSnowman(k);
 		}
@@ -71,7 +71,7 @@ void collisionDetectionSnowman(int k)
 		collisionResolutionSnowman(k);
 	}
 
-	
+
 
 	if (35 - abs(translate[k].y) <= 5)
 	{
@@ -80,8 +80,8 @@ void collisionDetectionSnowman(int k)
 		collision[k] = true;
 		collisionResolutionSnowman(k);
 	}
-	
-	
+
+
 }
 
 void animate(int i)
@@ -94,52 +94,52 @@ void animate(int i)
 			translate[i].y = translate[i].y + 0.1;
 
 		}
-	
+
 		if (translate[i].y >=30 && rotation[i].y<=90)
 		{
 			rotation[i].y = rotation[i].y + 0.1;
-			
+
 		}
-		
+
 		if (translate[i].y >= 30 && rotation[i].y > 90 && translate[i].x < 35)
 		{
 			translate[i].x = translate[i].x + 0.1;
 
 		}
-		
-		
+
+
 		if (translate[i].y >= 30 && rotation[i].y > 90 && translate[i].x >=35 && rotation[i].y <= 180)
 		{
 			rotation[i].y = rotation[i].y + 0.1;
-			
+
 		}
-		
+
 		if (translate[i].x >= 35 && rotation[i].y > 180 && translate[i].y >= 0)
 		{
 			translate[i].y = translate[i].y - 0.1;
 
 		}
-		
+
 		if (translate[i].x >= 35 && rotation[i].y > 180 && translate[i].y < 0 && rotation[i].y <= 270)
 		{
 			rotation[i].y = rotation[i].y + 0.1;
-			
+
 		}
-		
+
 		if (rotation[i].y > 270 && translate[i].y < 0 &&  translate[i].x >=15)
 		{
 			translate[i].x = translate[i].x - 0.1;
 
 		}
-		
+
 		if (rotation[i].y > 270 && translate[i].y < 0 && translate[i].x < 15 && rotation[i].y <= 360)
 		{
 			rotation[i].y = rotation[i].y + 0.1;
-			
+
 		}
 		if (rotation[i].y >= 360)
 			rotation[i].y = 0.0f;
-		
+
 	}
 	if (i == 1)
 	{
@@ -195,10 +195,10 @@ void animate(int i)
 			rotation[i].y = 0.0f;
 
 	}*/
-	translate[i].x = translate[i].x +0.01 * glm::sin(glm::radians(rotation[i].y));
-	translate[i].y = translate[i].y +0.01 * glm::cos(glm::radians(rotation[i].y));
+	translate[i].x = translate[i].x + 0.01 * glm::sin(glm::radians(rotation[i].y));
+	translate[i].y = translate[i].y + 0.01 * glm::cos(glm::radians(rotation[i].y));
 	collisionDetectionSnowman(i);
-	
+
 }
 float skyboxVertices[] =
 {
@@ -268,12 +268,12 @@ int main()
 
 
 
-	
+
 
 	Model base("base.obj");
 	Model moon("moon.dae");
 	Model hut("hut.obj");
-	
+
 	Model snowMan[] = { Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae") };
 	// Shader for the base
 	Shader baseShader("default.vert", "default.frag");
@@ -282,11 +282,11 @@ int main()
 	// Shader for hut
 	Shader hutS("default.vert", "default.frag");
 	// Shader for the  snowmenn
-	
+
 	Shader snowManShader[] = { Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag") };
 
 	// Sahder for the skybox
-	Shader skyboxS("SkyBox.vert","SkyBox.frag");
+	Shader skyboxS("SkyBox.vert", "SkyBox.frag");
 
 
 
@@ -294,16 +294,16 @@ int main()
 	// Variables that help the rotation of the pyramid
 	//float rotation = 0.0f;
 	double prevTime = glfwGetTime();
-	
-	
+
+
 	// Enables the Depth Buffer
 	glEnable(GL_DEPTH_TEST);
 	// Creates camera object
 	Camera camera(width, height, glm::vec3(5.0f, 5.0f, 2.0f));
 
 	// Main while loop
-	
-	
+
+
 	translate[0].x = 15.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
 	translate[1].x = 35.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
 	rotation[0].y = 90.0f;
@@ -328,15 +328,15 @@ int main()
 
 
 	/*
-	
-	GL TEXTURE CUBEMAP POSITIVE X -- right 
-	GL TEXTURE CUBEMAP NEGATIVE X -- left 
-	GL TEXTURE CUBEMAP POSITIVE Y -- top  
-	GL TEXTURE CUBEMAP NEGATIVE Y -- bottom 
-	GL TEXTURE CUBEMAP POSITIVE Z -- front 
+
+	GL TEXTURE CUBEMAP POSITIVE X -- right
+	GL TEXTURE CUBEMAP NEGATIVE X -- left
+	GL TEXTURE CUBEMAP POSITIVE Y -- top
+	GL TEXTURE CUBEMAP NEGATIVE Y -- bottom
+	GL TEXTURE CUBEMAP POSITIVE Z -- front
 	GL TEXTURE CUBEMAP NEGATIVE Z -- back
 	*/
-	std::string facesCubemap[6] =
+	vector<std::string> faces
 	{
 		"px.png", //Right
 		"nx.png", //Left
@@ -360,30 +360,18 @@ int main()
 	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Cycles through all the textures and attaches them to the cubemap object
-	for (unsigned int i = 0; i < 6; i++)
+	int width, height, nrComponents;
+	for (unsigned int i = 0; i < faces.size(); i++)
 	{
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load(facesCubemap[i].c_str(), &width, &height, &nrChannels, 0);
+		unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			stbi_set_flip_vertically_on_load(false);
-			glTexImage2D
-			(
-				GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-				0,
-				GL_RGBA,
-				width,
-				height,
-				0,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				data
-			);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 			stbi_image_free(data);
 		}
 		else
 		{
-			std::cout << "Failed to load texture: " << facesCubemap[i] << std::endl;
+			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
 			stbi_image_free(data);
 		}
 	}
@@ -398,9 +386,9 @@ int main()
 		camera.Inputs(window);
 		// Updates and exports the camera matrix to the Vertex Shader
 		camera.Matrix(45.0f, 0.1f, 200.0);
-		
+
 		lightShader.Activate();
-		
+
 		glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		glm::vec3 lightPos = glm::vec3(-100.0f, 100.0f, -50.0f);
 		glm::mat4 lightModel = glm::mat4(1.0f);
@@ -411,11 +399,11 @@ int main()
 		camera.ApplyCamera(lightShader, "cameraM");
 		moon.Draw(lightShader);
 
-		
 
 
-	
-	
+
+
+
 		baseShader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(baseModel));
 		glUniform4f(glGetUniformLocation(baseShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -435,16 +423,16 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(hutS.ID, "model"), 1, GL_FALSE, glm::value_ptr(hutM));
 		glUniform4f(glGetUniformLocation(hutS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 		glUniform3f(glGetUniformLocation(hutS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform1f(glGetUniformLocation(hutS.ID, "scale"),1.5f);
+		glUniform1f(glGetUniformLocation(hutS.ID, "scale"), 1.5f);
 		glUniform3f(glGetUniformLocation(hutS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-		
+
 		hut.Draw(hutS);
 		glm::mat4 snowMan1M = glm::mat4(1.0f);
-		
-		
+
+
 		for (int i = 0; i < 2; i++)
 		{
-			if (i <=1)
+			if (i <= 1)
 			{
 				snowManShader[i].Activate();
 				glm::mat4 snowMan1M = glm::mat4(1.0f);
@@ -452,7 +440,7 @@ int main()
 					collisionResolutionSnowman(i);
 				else
 					animate(i);
-				
+
 				snowMan1M = glm::translate(snowMan1M, glm::vec3(translate[i].x, translate[i].z, translate[i].y));
 				snowMan1M = glm::rotate(snowMan1M, glm::radians(rotation[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
 				snowMan1M = baseModel * snowMan1M;
@@ -516,7 +504,7 @@ int main()
 
 
 
-	
+
 	baseShader.Delete();
 	lightShader.Delete();
 	hutS.Delete();

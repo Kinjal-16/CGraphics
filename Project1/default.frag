@@ -14,7 +14,7 @@ uniform vec3 cameraFrag;
 void main()
 {
 	//Amnient lighting
-	float ambient =0.3f;
+	float ambient =0.1f;
 
 	//Diffuse lighting
 	vec3 normal = normalize(Normal);
