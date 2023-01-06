@@ -44,9 +44,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.vert">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="default.frag">
       <Filter>Resource Files</Filter>
     </None>
@@ -55,6 +52,15 @@
     </None>
     <None Include="light.frag">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SkyBox.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SkyBox.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="default.vert">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

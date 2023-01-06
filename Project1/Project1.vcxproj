@@ -177,6 +177,8 @@
     <None Include="default.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
+    <None Include="SkyBox.frag" />
+    <None Include="SkyBox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
