@@ -18,7 +18,7 @@
 const unsigned int width = 2880;
 const unsigned int height = 1800;
 
-glm::vec3 translate[6], rotation[6];
+glm::vec3 translate[6], rotation[6],rotationB[6];
 bool collision[6] = { false };
 bool wallCollide[6] = { false };
 float collisionRotaion[] = { 120.0f,120.0f,120.0f,120.0f,120.0f,120.0f };
@@ -65,7 +65,7 @@ void collisionDetectionSnowman(int k)
 			collisionResolutionSnowman(k);
 		}
 	}
-	if (translate[k].x > 0 && 45 - translate[k].x <= 5)
+	if (45 - abs(translate[k].x) <= 5)
 	{
 		collision[k] = true;
 		collisionResolutionSnowman(k);
@@ -273,14 +273,19 @@ int main()
 	Model base("base.obj");
 	Model moon("moon.dae");
 	Model hut("hut.obj");
-
-	Model snowMan[] = { Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae"),Model("snowman.dae") };
+	Model lamp("lamp.obj");
+	Model snowManHead[] = { Model("face.obj"),Model("face.obj")};
+	Model snowManB[] = { Model("snowman_Body.obj"),Model("snowman_Body.obj") };
+	Model snowmanH[] = { Model("hat.obj"),Model("hat.obj") };
 	// Shader for the base
 	Shader baseShader("default.vert", "default.frag");
 	// Shader for moon
 	Shader lightShader("light.vert", "light.frag");
 	// Shader for hut
 	Shader hutS("default.vert", "default.frag");
+
+	// Shader for the lamp
+	Shader lampS("default.vert", "default.frag");
 	// Shader for the  snowmenn
 
 	Shader snowManShader[] = { Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag"),Shader("default.vert", "default.frag") };
@@ -427,15 +432,36 @@ int main()
 		glUniform3f(glGetUniformLocation(hutS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 
 		hut.Draw(hutS);
-		glm::mat4 snowMan1M = glm::mat4(1.0f);
 
+		lampS.Activate();
+		glm::mat4 lampM = glm::mat4(1.0f);
+
+		lampM = glm::translate(lampM, glm::vec3(12.0f, 0.0f, 1.0f));
+		//lampM = glm::scale(lampM, glm::vec3(0, 0.0f,-5.0f));
+		lampM = baseModel * lampM;
+		camera.ApplyCamera(lampS, "cameraM");
+		glUniformMatrix4fv(glGetUniformLocation(lampS.ID, "model"), 1, GL_FALSE, glm::value_ptr(lampM));
+		glUniform4f(glGetUniformLocation(lampS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniform3f(glGetUniformLocation(lampS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform1f(glGetUniformLocation(lampS.ID, "scale"), 0.5f);
+		glUniform3f(glGetUniformLocation(lampS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+
+		lamp.Draw(lampS);
+
+		
+		
 
 		for (int i = 0; i < 2; i++)
 		{
 			if (i <= 1)
 			{
+				rotationB[i].y = rotationB[i].y + 0.5;
+				if (rotationB[i].y >= 360.0f)
+					rotationB[i].y = 0.0f;
 				snowManShader[i].Activate();
 				glm::mat4 snowMan1M = glm::mat4(1.0f);
+				glm::mat4 snowManBody = glm::mat4(1.0f);
+				glm::mat4 snowManHa = glm::mat4(1.0f);
 				if (collision[i])
 					collisionResolutionSnowman(i);
 				else
@@ -450,31 +476,31 @@ int main()
 				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
 				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-				snowMan[i].Draw(snowManShader[i]);
+				snowManHead[i].Draw(snowManShader[i]);
+				snowManBody = glm::rotate(snowManBody, glm::radians(rotationB[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
+				snowManBody = snowMan1M * snowManBody;
+				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowManBody));
+				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+				snowManB[i].Draw(snowManShader[i]);
+
+				
+				snowManHa = snowMan1M * snowManHa;
+				snowManHa = glm::rotate(snowManHa, glm::radians(rotationB[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
+				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowManHa));
+				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
+				snowmanH[i].Draw(snowManShader[i]);
 				//y1 = y1 + 4.0;
 			}
 			else
 				break;
 		}
-		//y1 = y1 - 12;
-		//y1 = 0.0f;
-		//for (int i = 3; i < 6; i++)
-		//{
-		//	y1 = y1 - 4.0;
-		//	snowManShader[i].Activate();
-		//	glm::mat4 snowMan1M = glm::mat4(1.0f);
-		//	snowMan1M = glm::translate(snowMan1M, glm::vec3(x1, z1, y1));
-		//	snowMan1M = baseModel * snowMan1M;
-		//	camera.ApplyCamera(snowManShader[i], "cameraM");
-		//	glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowMan1M));
-		//	glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-		//	glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		//	glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
-		//	glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-		//	snowMan[i].Draw(snowManShader[i]);
-		//	
-		//}
-		// Swap the back buffer with the front buffer
+		
 		glDepthFunc(GL_LEQUAL);
 
 		skyboxS.Activate();
