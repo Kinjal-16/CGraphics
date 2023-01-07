@@ -274,13 +274,15 @@ int main()
 	Model moon("moon.dae");
 	Model hut("hut.obj");
 	Model lamp("lamp.obj");
-	Model snowManHead[] = { Model("face.obj"),Model("face.obj")};
-	Model snowManB[] = { Model("snowman_Body.obj"),Model("snowman_Body.obj") };
-	Model snowmanH[] = { Model("hat.obj"),Model("hat.obj") };
+	Model snowManHead[] = { Model("face.obj"),Model("face.obj"),Model("face.obj"),Model("face.obj") ,Model("face.obj"),Model("face.obj") };
+	Model snowManB[] = { Model("snowman_Body.obj"),Model("snowman_Body.obj"),Model("snowman_Body.obj"),Model("snowman_Body.obj"),Model("snowman_Body.obj"),Model("snowman_Body.obj") };
+	Model snowmanH[] = { Model("hat.obj"),Model("hat.obj"),Model("hat.obj"),Model("hat.obj"),Model("hat.obj"),Model("hat.obj") };
 	// Shader for the base
 	Shader baseShader("default.vert", "default.frag");
 	// Shader for moon
 	Shader lightShader("light.vert", "light.frag");
+
+	Shader lampShader("light.vert", "light.frag");
 	// Shader for hut
 	Shader hutS("default.vert", "default.frag");
 
@@ -310,9 +312,17 @@ int main()
 
 
 	translate[0].x = 15.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
-	translate[1].x = 35.0f, translate[0].z = 0.0f, translate[0].y = 0.0f;
+	translate[1].x = 35.0f, translate[1].z = 0.0f, translate[1].y = 0.0f;
+	translate[2].x = 35.0f, translate[2].z = 0.0f, translate[2].y = 15.0f;
+	translate[3].x = -35.0f, translate[3].z = 0.0f, translate[3].y = 15.0f;
+	translate[4].x = -35.0f, translate[4].z = 0.0f, translate[4].y = -15.0f;
+	translate[5].x = 35.0f, translate[5].z = 0.0f, translate[5].y = -15.0f;
 	rotation[0].y = 90.0f;
 	rotation[1].y = 270.0f;
+	rotation[2].y = 180.0f;
+	rotation[3].y = 90.0f;
+	rotation[4].y = 270.0f;
+	rotation[5].y = 180.0f;
 	int flag = 0;
 
 	// Create VAO, VBO, and EBO for the skybox
@@ -404,15 +414,27 @@ int main()
 		camera.ApplyCamera(lightShader, "cameraM");
 		moon.Draw(lightShader);
 
+		lampShader.Activate();
 
-
+		glm::mat4 lampM = glm::mat4(1.0f);
+		glm::vec3 lampPos = glm::vec3(12.0f, 0.0f, 1.0f);
+		lampM = glm::translate(lampM, lampPos);
+		glm::vec4 lampColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glUniform4f(glGetUniformLocation(lampShader.ID, "lightColor"), lampColour.x, lampColour.y, lampColour.z, lampColour.w);
+		glUniformMatrix4fv(glGetUniformLocation(lampShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lampM));
+		glUniform1f(glGetUniformLocation(lampShader.ID, "scale"), 3.0f);
+		camera.ApplyCamera(lampShader, "cameraM");
+		lamp.Draw(lampShader);
 
 
 
 		baseShader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(baseShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(baseModel));
-		glUniform4f(glGetUniformLocation(baseShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-		glUniform3f(glGetUniformLocation(baseShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform4f(glGetUniformLocation(baseShader.ID, "dirLight.lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniform4f(glGetUniformLocation(baseShader.ID, "point.lightColor"), lampColour.x, lampColour.y, lampColour.z, lightColor.w);
+		glUniform3f(glGetUniformLocation(baseShader.ID, "point.lightPos"), lampPos.x, lampPos.y, lampPos.z);
+
+		//glUniform3f(glGetUniformLocation(baseShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 		camera.ApplyCamera(baseShader, "cameraM");
 		glUniform1f(glGetUniformLocation(baseShader.ID, "scale"), 2.0f);
 		glUniform3f(glGetUniformLocation(baseShader.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
@@ -426,35 +448,23 @@ int main()
 		hutM = baseModel * hutM;
 		camera.ApplyCamera(hutS, "cameraM");
 		glUniformMatrix4fv(glGetUniformLocation(hutS.ID, "model"), 1, GL_FALSE, glm::value_ptr(hutM));
-		glUniform4f(glGetUniformLocation(hutS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-		glUniform3f(glGetUniformLocation(hutS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+		glUniform4f(glGetUniformLocation(hutS.ID, "dirLight.lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		glUniform4f(glGetUniformLocation(hutS.ID, "point.lightColor"), lampColour.x, lampColour.y, lampColour.z, lightColor.w);
+		glUniform3f(glGetUniformLocation(hutS.ID, "point.lightPos"), lampPos.x, lampPos.y, lampPos.z);
+
 		glUniform1f(glGetUniformLocation(hutS.ID, "scale"), 1.5f);
 		glUniform3f(glGetUniformLocation(hutS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 
 		hut.Draw(hutS);
 
-		lampS.Activate();
-		glm::mat4 lampM = glm::mat4(1.0f);
-
-		lampM = glm::translate(lampM, glm::vec3(12.0f, 0.0f, 1.0f));
-		//lampM = glm::scale(lampM, glm::vec3(0, 0.0f,-5.0f));
-		lampM = baseModel * lampM;
-		camera.ApplyCamera(lampS, "cameraM");
-		glUniformMatrix4fv(glGetUniformLocation(lampS.ID, "model"), 1, GL_FALSE, glm::value_ptr(lampM));
-		glUniform4f(glGetUniformLocation(lampS.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-		glUniform3f(glGetUniformLocation(lampS.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-		glUniform1f(glGetUniformLocation(lampS.ID, "scale"), 0.5f);
-		glUniform3f(glGetUniformLocation(lampS.ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
-
-		lamp.Draw(lampS);
+		
 
 		
 		
 
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 6; i++)
 		{
-			if (i <= 1)
-			{
+			
 				rotationB[i].y = rotationB[i].y + 0.5;
 				if (rotationB[i].y >= 360.0f)
 					rotationB[i].y = 0.0f;
@@ -472,16 +482,16 @@ int main()
 				snowMan1M = baseModel * snowMan1M;
 				camera.ApplyCamera(snowManShader[i], "cameraM");
 				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowMan1M));
-				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "dirLight.lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "point.lightColor"), lampColour.x, lampColour.y, lampColour.z, lightColor.w);
+				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "point.lightPos"), lampPos.x, lampPos.y, lampPos.z);
 				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
 				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 				snowManHead[i].Draw(snowManShader[i]);
 				snowManBody = glm::rotate(snowManBody, glm::radians(rotationB[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
 				snowManBody = snowMan1M * snowManBody;
 				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowManBody));
-				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
 				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 				snowManB[i].Draw(snowManShader[i]);
@@ -490,15 +500,12 @@ int main()
 				snowManHa = snowMan1M * snowManHa;
 				snowManHa = glm::rotate(snowManHa, glm::radians(rotationB[i].y), glm::vec3(0.0f, 1.0f, 0.0f));
 				glUniformMatrix4fv(glGetUniformLocation(snowManShader[i].ID, "model"), 1, GL_FALSE, glm::value_ptr(snowManHa));
-				glUniform4f(glGetUniformLocation(snowManShader[i].ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+				
 				glUniform1f(glGetUniformLocation(snowManShader[i].ID, "scale"), 1.0f);
 				glUniform3f(glGetUniformLocation(snowManShader[i].ID, "cameraFrag"), camera.Position.x, camera.Position.y, camera.Position.z);
 				snowmanH[i].Draw(snowManShader[i]);
 				//y1 = y1 + 4.0;
-			}
-			else
-				break;
+			
 		}
 		
 		glDepthFunc(GL_LEQUAL);
